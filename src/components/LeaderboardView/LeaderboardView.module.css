@@ -1,0 +1,165 @@
+/* Full-screen overlay so it doesn't interfere with source selection */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem 1.25rem 2rem;
+  max-width: 430px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  text-align: center;
+  margin: 0;
+  color: var(--color-text);
+  padding-top: 0.5rem;
+}
+
+.empty {
+  text-align: center;
+  color: var(--color-text-secondary);
+  font-size: 0.95rem;
+  padding: 2rem 0;
+  flex: 1;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.entry {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--color-surface);
+  border-radius: 0.75rem;
+  border: 1px solid var(--color-border);
+}
+
+.position {
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  width: 2rem;
+}
+
+.entryMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.source {
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.9rem;
+}
+
+.date {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+}
+
+.entryStats {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.125rem;
+  flex-shrink: 0;
+}
+
+.score {
+  font-weight: 700;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.correct {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.time {
+  color: var(--color-text-secondary);
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+/* Actions: Borrar (small, left) + Cerrar (big, center/right) */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.btnClear {
+  padding: 0.6rem 1rem;
+  border: 1.5px solid var(--color-wrong, #f44336);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--color-wrong, #f44336);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+}
+
+.btnClear:hover {
+  background: var(--color-wrong, #f44336);
+  color: #fff;
+}
+
+.btnClose {
+  flex: 1;
+  padding: 0.875rem;
+  border: none;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btnClose:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btnClose:active {
+  transform: translateY(0);
+}

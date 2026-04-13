@@ -1,0 +1,147 @@
+import { useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
+import type { QuestionResult, TriviaSource } from '../../types';
+import type { Theme } from '../../hooks/useTheme';
+import { addEntry, getEntries, saveEntries, isHighScore } from '../../engine/leaderboard';
+import { playHighScore, playGameEnd } from '../../audio/soundFX';
+import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
+import styles from './ResultsScreen.module.css';
+
+interface ResultsScreenProps {
+  results: QuestionResult[];
+  totalScore: number;
+  source: TriviaSource;
+  onPlayAgain: () => void;
+  onChangeSource: () => void;
+  theme: Theme;
+  onToggleTheme: () => void;
+}
+
+export function ResultsScreen({
+  results,
+  totalScore,
+  source,
+  onPlayAgain,
+  onChangeSource,
+  theme,
+  onToggleTheme,
+}: ResultsScreenProps) {
+  const correctAnswers = results.filter((r) => r.isCorrect).length;
+  const totalTimeMs = results.reduce((sum, r) => sum + r.timeMs, 0);
+  const savedRef = useRef(false);
+
+  useEffect(() => {
+    if (savedRef.current) return;
+    savedRef.current = true;
+    try {
+      const entries = getEntries();
+      // crypto.randomUUID() requires HTTPS — use fallback for HTTP (local dev)
+      const id = typeof crypto?.randomUUID === 'function'
+        ? crypto.randomUUID()
+        : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const newEntry = {
+        id,
+        sourceName: source.name,
+        sourceType: source.type,
+        totalScore,
+        correctAnswers,
+        totalTimeMs,
+        playedAt: Date.now(),
+      };
+      const updated = addEntry(entries, newEntry);
+      saveEntries(updated);
+
+      if (isHighScore(entries, totalScore)) {
+        playHighScore();
+      } else {
+        playGameEnd();
+      }
+    } catch (e) {
+      console.error('[ResultsScreen] Error saving entry:', e);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const formatTime = (ms: number) => {
+    const secs = Math.floor(ms / 1000);
+    const mins = Math.floor(secs / 60);
+    const remaining = secs % 60;
+    return mins > 0 ? `${mins}m ${remaining}s` : `${remaining}s`;
+  };
+
+  return (
+    <div className={styles.screen}>
+      <div className={styles.topBar}>
+        <ThemeToggle theme={theme} onToggle={onToggleTheme} inline />
+      </div>
+      <div className={styles.header}>
+        <h1 className={styles.title}>Resultados</h1>
+        <div className={styles.scoreBlock}>
+          <span className={styles.totalScore}>{totalScore}</span>
+          <span className={styles.scoreLabel}>puntos</span>
+        </div>
+        <div className={styles.stats}>
+          <span className={styles.correctCount}>
+            {correctAnswers} / 7 correctas
+          </span>
+          <span className={styles.timeTotal}>{formatTime(totalTimeMs)}</span>
+        </div>
+      </div>
+
+      <ul className={styles.songList} aria-label="Lista de canciones">
+        {results.map((result, index) => {
+          const correctName = result.question.track.name;
+          const isTimeout = result.selectedIndex === null && !result.isCorrect;
+          const chosenName =
+            result.selectedIndex !== null
+              ? result.question.options[result.selectedIndex]
+              : null;
+
+          // Build the detail line — only for incorrect answers
+          let detailContent: ReactNode = null;
+          if (!result.isCorrect) {
+            if (isTimeout) {
+              detailContent = (
+                <span className={styles.timeout}>⏱ Tiempo agotado</span>
+              );
+            } else {
+              detailContent = (
+                <>
+                  <span className={styles.chosen}>{chosenName}</span>
+                  {' → '}
+                  <span className={styles.correctAnswer}>{correctName}</span>
+                </>
+              );
+            }
+          }
+
+          return (
+            <li
+              key={index}
+              className={`${styles.songItem} ${result.isCorrect ? styles.correct : styles.incorrect}`}
+            >
+              <span className={styles.indicator}>
+                {result.isCorrect ? '✅' : '❌'}
+              </span>
+              <div className={styles.songInfo}>
+                <span className={styles.songName}>{correctName}</span>
+                {detailContent && (
+                  <span className={styles.songDetail}>{detailContent}</span>
+                )}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className={styles.actions}>
+        <button className={styles.btnPrimary} onClick={onPlayAgain}>
+          Jugar de nuevo
+        </button>
+        <button className={styles.btnSecondary} onClick={onChangeSource}>
+          Cambiar fuente
+        </button>
+      </div>
+    </div>
+  );
+}

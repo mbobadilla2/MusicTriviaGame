@@ -1,0 +1,64 @@
+Necesito crear una webapp que sea un juego de trivia musical. La trivia se jugará de la siguiente manera: 
+
+El usuario podrá buscar mediante una caja de texto el nombre de un artista o grupo musical sobre el que quiera hacer la trivia, o podrá seleccionar una serie de listas de reproducción pre seleccionadas.
+
+Una vez elegido el artista mediante búsqueda, o seleccionada la playlist, el flujo de la triai será este:
+
+* Se comienza a reproducir el sample de una canción de esta lista, y se muestran 4 opciones con nombres de canciones de este artista o playlist, de las cuales una opción corresponde al nombre correcto de la canción que está sonando, y las otras tres opciones son incorrectas. El objetivo es que el jugador seleccione el nombre correcto de la canción que suena.
+
+* Una vez seleccionado el nombre de la canción, pueden suceder dos cosas: Que el usuario eligió el nombre correcto: en este caso, el jugador sumará 100 puntos a un contador, y se dará retroalimentación para indicar que la opción elegida es la correcta; si el usuario selecciona el nombre incorrecto, no sumará puntos y se dará retroalimentación para indicar que el nombre de la canción es incorrecto y se resaltará el nombre correcto de la lista, solo a modo informativo. En cualquier caso, al seleccionar una opción, se debe pausar la reproducción de la canción antes de hacer la evaluación. El jugador tendrá 10 segundos para seleccionar una de las opciones, si no selecciona ninguna, se tomará como que eligió incorrectamente. Al seleccionar una opción, el contador se pausa y se reinicia al comenzar la siguiente canción.
+
+* El flujo será así para las 7 canciones que componen la trivia, y el objetivo es que el jugador sume la mayor cantidad de puntos posibles.
+
+* Al finalizar la trivia, se mostrará una pantalla de resumen con los puntos acumulados, y los resultados de la trivia, indicando en qué canciones acertó en el nombre, y en cuales eligió una opción incorrecta (en este caso, se debe mostrar cuál fue la opción elegida por el usuario y cuál era la correcta).
+
+Para hacer esto, se debe usar la API de Spotify para descargar las playlist, los samples y los nombres de las canciones que componen la trivia. Genera los archivos de configuración para colocar los keys de las APIs, y yo los coloco.
+
+La app debe funcionar con React y estar optimizada para jugarse en teléfonos móviles actuales y debe guardar un registro local de las mejores puntuciones que se han alcanzado en la trivia para ese dispositivo (colocar nombre de la playlist, puntuación total, número de aciertos y tiempo total que tardó en contestar cada pregunta de la trivia).
+
+Se debe hacer una descarga de los samples y nombres de canciones que componen la trivia para que estén listos para ejecutarse al momento de comenzar y no se tengan que hacer descargas durante la partida.
+
+En cada partida, se debe seleccionar de forma aleatoria las canciones que compondrán la trivia, así como el orden de las respuestas para cada pregunta, y el orden y que saldrá cada canción, de manera que cada partida sea diferente, aunque se use el mismo artista o playlist.
+
+Se debe dar retroalimentación al jugador, con efectos de sonido al seleccionar cada opción, y al llegar al momento de la puntuación, con el objetivo de hacerlo más juicy.
+
+Usa diseño flat design para la interfaz del jugador, y agrega la opción para cambiar el tema de la interfaz a dark mode, y persiste las preferencias.
+
+Usa buenas prácticas de desarrollo y seguridad para este desarrollo.
+
+Hazme todas las preguntas que consideres necesarias para poder ejecutar este proyecto.
+
+
+------------------------
+
+Muy bien. Tengo algunos comentarios para hacer ajustes:
+
+### Requisito 1: Cuando se seleccione una fuente para comenzar la trivia, hay que pedir confirmación del usuario, para evitar que se inicie una nueva partida a partir de un clic accidental a algún artista o playlist.
+
+### Requisito 5: Cada pregunta tendrá una puntuación máxima de 150 puntos, que irá disminuyendo de forma proporcional de acuerdo al temporizador, de manera que se irán descontando 10 puntos por cada segundo que pase, y se pueden ir descontando puntos por cada ms que pasaron, para hacer las puntuaciones más exactas.
+
+Para este mismo requerimiento, se puede considerar también una racha de aciertos, en la que se otorgue un bonus adicional cuando se encadenan respuestas correctas. El bonus se corta cuando se elige una respuesta incorrecta o pasan los 10 segundos y no se eligió una respuesta.
+
+### Requisito 4: El temporizador de 10 segundos de mostrará como una barra en la parte superior que se irá vaciando conforme pase el tiempo. También irá cambiando de verde a rojo de forma gradual conforme se acabe el tiempo, con efecto juicy.
+
+### Requisito 8: Al entrar a ver el leaderboard, se debe mostrar una opción para resetear las puntuaciones, con previa confirmación del usuario, para evitar borrarlas por clics accidentales.
+
+------------------------
+
+Siguiente iteración:
+
+Sección de logros desbloqueados
+
+* Termina una partida con al menos 5 respuestas correctas en menos de 15 segundos.
+
+* Termina una partida acertando todas las preguntas de la trivia.
+
+* Termina una partida con todas las respuestas correctas en menos de 10 segundos.
+
+* Gana tu primera partida.
+
+* Gana 10 partidas.
+
+* Gana 100 partidas.
+
+* Gana 10 partidas acertando a todas las preguntas.

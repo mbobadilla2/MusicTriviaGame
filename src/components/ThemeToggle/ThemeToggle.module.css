@@ -1,0 +1,41 @@
+.button {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 100;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--color-text);
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.button:hover {
+  background: var(--color-border);
+}
+
+.button:active {
+  opacity: 0.8;
+}
+
+/* Inline variant — used inside game header (not fixed) */
+.buttonInline {
+  position: static;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.75rem;
+  font-size: 1.25rem;
+  cursor: pointer;
+  color: var(--color-text);
+  line-height: 1;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.buttonInline:hover {
+  background: var(--color-border);
+}
