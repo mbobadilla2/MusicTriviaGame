@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { TriviaSource } from '../../types';
+import type { Translations } from '../../i18n/translations';
 import { SearchBar } from '../SearchBar/SearchBar';
 import { PlaylistSelector } from '../PlaylistSelector/PlaylistSelector';
 import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
@@ -8,9 +9,10 @@ import styles from './SourceSelection.module.css';
 interface SourceSelectionProps {
   onSourceSelected: (source: TriviaSource) => void;
   insufficientTracks?: boolean;
+  t: Translations;
 }
 
-export function SourceSelection({ onSourceSelected, insufficientTracks = false }: SourceSelectionProps) {
+export function SourceSelection({ onSourceSelected, insufficientTracks = false, t }: SourceSelectionProps) {
   const [pendingSource, setPendingSource] = useState<TriviaSource | null>(null);
 
   function handleSourcePicked(source: TriviaSource) {
@@ -30,18 +32,16 @@ export function SourceSelection({ onSourceSelected, insufficientTracks = false }
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.heading}>Music Trivia</h1>
-      <p className={styles.subtitle}>Elige un artista o playlist para comenzar</p>
+      <h1 className={styles.heading}>{t.appTitle}</h1>
+      <p className={styles.subtitle}>{t.appSubtitle}</p>
 
       {insufficientTracks && (
-        <p className={styles.warning}>
-          ⚠️ La fuente seleccionada tiene menos de 7 canciones con preview disponible. Elige otra.
-        </p>
+        <p className={styles.warning}>⚠️ {t.insufficientTracks}</p>
       )}
 
       <section className={styles.section}>
-        <h2 className={styles.sectionTitle}>Buscar artista</h2>
-        <SearchBar onSelectArtist={handleSourcePicked} />
+        <h2 className={styles.sectionTitle}>{t.searchArtist}</h2>
+        <SearchBar onSelectArtist={handleSourcePicked} t={t} />
       </section>
 
       <div className={styles.divider}>
@@ -49,19 +49,19 @@ export function SourceSelection({ onSourceSelected, insufficientTracks = false }
       </div>
 
       <section className={styles.section}>
-        <PlaylistSelector onSelectPlaylist={handleSourcePicked} />
+        <PlaylistSelector onSelectPlaylist={handleSourcePicked} t={t} />
       </section>
 
       <ConfirmDialog
         isOpen={pendingSource !== null}
-        title="Confirmar selección"
-        message={`¿Jugar con "${pendingSource?.name ?? ''}"?`}
+        title={t.confirmTitle}
+        message={`${t.confirmMessage} "${pendingSource?.name ?? ''}"?`}
         onConfirm={handleConfirm}
         onCancel={handleCancel}
       />
 
       <footer className={styles.footer}>
-        Made by Miguel Fernando w/ Kiro 🤖
+        {t.madeBy}
       </footer>
     </div>
   );

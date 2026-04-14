@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react';
 import type { Question } from '../../types';
-import type { Theme } from '../../hooks/useTheme';
 import { QUESTION_DURATION_MS } from '../../engine/gameEngine';
 import { AudioPlayer } from '../../audio/audioPlayer';
 import * as soundFX from '../../audio/soundFX';
@@ -8,7 +7,6 @@ import { useTimer } from '../../hooks/useTimer';
 import { TimerBar } from '../TimerBar/TimerBar';
 import { ScoreCounter } from '../ScoreCounter/ScoreCounter';
 import { QuestionCard } from '../QuestionCard/QuestionCard';
-import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
 import type { FeedbackState } from '../QuestionCard/QuestionCard';
 import styles from './GameScreen.module.css';
 
@@ -22,8 +20,7 @@ interface GameScreenProps {
   selectedIndex: number | null;
   onAnswer: (selectedIndex: number | null, timeMs: number) => void;
   onNext: () => void;
-  theme: Theme;
-  onToggleTheme: () => void;
+  t: { question: string; of: string; next: string; streak: string; };
 }
 
 export function GameScreen({
@@ -36,8 +33,7 @@ export function GameScreen({
   selectedIndex,
   onAnswer,
   onNext,
-  theme,
-  onToggleTheme,
+  t,
 }: GameScreenProps) {
   const question = questions[currentIndex];
 
@@ -135,11 +131,10 @@ export function GameScreen({
 
       <div className={styles.header}>
         <span className={styles.questionCount}>
-          Pregunta {currentIndex + 1} / {questions.length}
+          {t.question} {currentIndex + 1} {t.of} {questions.length}
         </span>
         <div className={styles.headerRight}>
-          <ScoreCounter score={score} streak={streak} />
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} inline />
+          <ScoreCounter score={score} streak={streak} streakLabel={t.streak} />
         </div>
       </div>
 
@@ -156,7 +151,7 @@ export function GameScreen({
       {phase === 'question-feedback' && (
         <div className={styles.nextWrapper}>
           <button className={styles.nextButton} onClick={handleNext}>
-            Siguiente →
+            {t.next}
           </button>
         </div>
       )}

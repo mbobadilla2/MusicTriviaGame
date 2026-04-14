@@ -20,11 +20,14 @@ const PRESET_PLAYLISTS: PlaylistItem[] = [
   { id: '5104249748', name: 'Latin Classics', imageUrl: '🌶️' },
 ];
 
+import type { Translations } from '../../i18n/translations';
+
 interface PlaylistSelectorProps {
   onSelectPlaylist: (source: TriviaSource) => void;
+  t: Translations;
 }
 
-export function PlaylistSelector({ onSelectPlaylist }: PlaylistSelectorProps) {
+export function PlaylistSelector({ onSelectPlaylist, t }: PlaylistSelectorProps) {
   function handleSelect(playlist: PlaylistItem) {
     const source: TriviaSource = {
       type: 'playlist',
@@ -37,7 +40,7 @@ export function PlaylistSelector({ onSelectPlaylist }: PlaylistSelectorProps) {
 
   return (
     <div className={styles.container}>
-      <h3 className={styles.title}>Playlists populares</h3>
+      <h3 className={styles.title}>{t.popularPlaylists}</h3>
       <ul className={styles.list}>
         {PRESET_PLAYLISTS.map((playlist) => (
           <li key={playlist.id}>

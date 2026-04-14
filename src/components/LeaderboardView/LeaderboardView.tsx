@@ -1,11 +1,15 @@
 import { useState, useEffect } from 'react';
-import { getEntries, clearEntries } from '../../engine/leaderboard';
-import { ConfirmDialog } from '../ConfirmDialog/ConfirmDialog';
+import { getEntries } from '../../engine/leaderboard';
 import type { LeaderboardEntry } from '../../types';
 import styles from './LeaderboardView.module.css';
 
 interface LeaderboardViewProps {
   onClose: () => void;
+  t: {
+    leaderboardTitle: string;
+    noScores: string;
+    close: string;
+  };
 }
 
 function formatTime(ms: number): string {
@@ -13,34 +17,27 @@ function formatTime(ms: number): string {
 }
 
 function formatDate(timestamp: number): string {
-  return new Date(timestamp).toLocaleDateString('es-ES', {
+  return new Date(timestamp).toLocaleDateString(undefined, {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
   });
 }
 
-export function LeaderboardView({ onClose }: LeaderboardViewProps) {
+export function LeaderboardView({ onClose, t }: LeaderboardViewProps) {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
-  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     setEntries(getEntries());
   }, []);
 
-  function handleClearConfirm() {
-    clearEntries();
-    setEntries([]);
-    setShowConfirm(false);
-  }
-
   return (
     <div className={styles.overlay}>
       <div className={styles.container}>
-        <h2 className={styles.title}>🏆 Puntuaciones</h2>
+        <h2 className={styles.title}>{t.leaderboardTitle}</h2>
 
         {entries.length === 0 ? (
-          <p className={styles.empty}>Aún no hay puntuaciones registradas</p>
+          <p className={styles.empty}>{t.noScores}</p>
         ) : (
           <ol className={styles.list}>
             {entries.map((entry, index) => (
@@ -61,21 +58,10 @@ export function LeaderboardView({ onClose }: LeaderboardViewProps) {
         )}
 
         <div className={styles.actions}>
-          <button className={styles.btnClear} onClick={() => setShowConfirm(true)}>
-            Borrar
-          </button>
           <button className={styles.btnClose} onClick={onClose}>
-            Cerrar
+            {t.close}
           </button>
         </div>
-
-        <ConfirmDialog
-          isOpen={showConfirm}
-          title="Borrar puntuaciones"
-          message="¿Seguro que quieres borrar todas las puntuaciones? Esta acción no se puede deshacer."
-          onConfirm={handleClearConfirm}
-          onCancel={() => setShowConfirm(false)}
-        />
       </div>
     </div>
   );

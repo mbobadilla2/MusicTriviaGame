@@ -4,11 +4,14 @@ import { searchArtists } from '../../api/apiClient';
 import type { ArtistResult } from '../../api/apiClient';
 import styles from './SearchBar.module.css';
 
+import type { Translations } from '../../i18n/translations';
+
 interface SearchBarProps {
   onSelectArtist: (source: TriviaSource) => void;
+  t: Translations;
 }
 
-export function SearchBar({ onSelectArtist }: SearchBarProps) {
+export function SearchBar({ onSelectArtist, t }: SearchBarProps) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<ArtistResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -31,7 +34,7 @@ export function SearchBar({ onSelectArtist }: SearchBarProps) {
         const artists = await searchArtists(query);
         setResults(artists.slice(0, 8));
       } catch {
-        setError('No se pudo realizar la búsqueda. Intenta de nuevo.');
+        setError(t.searchError);
         setResults([]);
       } finally {
         setIsLoading(false);
@@ -58,12 +61,12 @@ export function SearchBar({ onSelectArtist }: SearchBarProps) {
       <input
         className={styles.input}
         type="text"
-        placeholder="Buscar artista..."
+        placeholder={t.searchPlaceholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        aria-label="Buscar artista"
+        aria-label={t.searchPlaceholder}
       />
-      {isLoading && <p className={styles.loading}>Buscando...</p>}
+      {isLoading && <p className={styles.loading}>{t.searching}</p>}
       {error && <p className={styles.error}>{error}</p>}
       {results.length > 0 && (
         <ul className={styles.list} role="listbox" aria-label="Resultados de búsqueda">

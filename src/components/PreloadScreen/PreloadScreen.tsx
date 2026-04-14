@@ -18,6 +18,15 @@ interface PreloadScreenProps {
   source: TriviaSource;
   onReady: (questions: Question[]) => void;
   onError: () => void;
+  t: {
+    loadingSongs: string;
+    downloadingAudio: string;
+    readyToPlay: string;
+    play: string;
+    back: string;
+    noPreviewError: string;
+    networkError: string;
+  };
 }
 
 type LoadState = 'loading' | 'ready' | 'error';
@@ -33,10 +42,10 @@ function SourceImage({ imageUrl, name }: { imageUrl: string; name: string }) {
   return null;
 }
 
-export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) {
+export function PreloadScreen({ source, onReady, onError, t }: PreloadScreenProps) {
   const [loadState, setLoadState] = useState<LoadState>('loading');
   const [progress, setProgress] = useState(0);
-  const [statusText, setStatusText] = useState('Cargando canciones...');
+  const [statusText, setStatusText] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
 
@@ -45,7 +54,7 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
 
     async function run() {
       try {
-        setStatusText('Cargando canciones...');
+        setStatusText(t.loadingSongs);
 
         // 1. Obtener tracks según el tipo de fuente
         let allTracks;
@@ -61,9 +70,7 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
         // 2. Filtrar tracks con preview válido y verificar cantidad mínima
         const tracksWithPreview = filterTracksWithPreview(allTracks);
         if (!hasEnoughTracks(tracksWithPreview, MIN_TRACKS)) {
-          setErrorMessage(
-            `No hay suficientes canciones con vista previa disponible. Se necesitan al menos ${MIN_TRACKS} canciones.`
-          );
+          setErrorMessage(t.noPreviewError);
           setLoadState('error');
           return;
         }
@@ -80,7 +87,7 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
         if (cancelled) return;
 
         // 6. Precargar audio con progreso
-        setStatusText('Descargando audio...');
+        setStatusText(t.downloadingAudio);
         await preloadAudio(builtQuestions, (loaded, total) => {
           if (!cancelled) {
             const pct = Math.round((loaded / total) * 100);
@@ -92,12 +99,12 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
 
         setQuestions(builtQuestions);
         setProgress(100);
-        setStatusText('¡Listo para jugar!');
+        setStatusText(t.readyToPlay);
         setLoadState('ready');
       } catch (err) {
         if (cancelled) return;
-        const msg = err instanceof Error ? err.message : 'Error desconocido';
-        setErrorMessage(`Error de red al cargar los recursos: ${msg}`);
+        const msg = err instanceof Error ? err.message : '';
+        setErrorMessage(`${t.networkError}: ${msg}`);
         setLoadState('error');
       }
     }
@@ -122,7 +129,7 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
         </div>
         <p className={styles.errorMessage}>{errorMessage}</p>
         <button className={styles.backButton} onClick={onError}>
-          Volver
+          {t.back}
         </button>
       </div>
     );
@@ -149,7 +156,7 @@ export function PreloadScreen({ source, onReady, onError }: PreloadScreenProps) 
         onClick={handlePlay}
         disabled={loadState !== 'ready'}
       >
-        ¡Jugar!
+        {t.play}
       </button>
     </div>
   );

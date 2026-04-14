@@ -1,10 +1,8 @@
 import { useEffect, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { QuestionResult, TriviaSource } from '../../types';
-import type { Theme } from '../../hooks/useTheme';
 import { addEntry, getEntries, saveEntries, isHighScore } from '../../engine/leaderboard';
 import { playHighScore, playGameEnd } from '../../audio/soundFX';
-import { ThemeToggle } from '../ThemeToggle/ThemeToggle';
 import styles from './ResultsScreen.module.css';
 
 interface ResultsScreenProps {
@@ -13,8 +11,14 @@ interface ResultsScreenProps {
   source: TriviaSource;
   onPlayAgain: () => void;
   onChangeSource: () => void;
-  theme: Theme;
-  onToggleTheme: () => void;
+  t: {
+    results: string;
+    points: string;
+    correct: string;
+    timeout: string;
+    playAgain: string;
+    backToHome: string;
+  };
 }
 
 export function ResultsScreen({
@@ -23,8 +27,7 @@ export function ResultsScreen({
   source,
   onPlayAgain,
   onChangeSource,
-  theme,
-  onToggleTheme,
+  t,
 }: ResultsScreenProps) {
   const correctAnswers = results.filter((r) => r.isCorrect).length;
   const totalTimeMs = results.reduce((sum, r) => sum + r.timeMs, 0);
@@ -71,18 +74,15 @@ export function ResultsScreen({
 
   return (
     <div className={styles.screen}>
-      <div className={styles.topBar}>
-        <ThemeToggle theme={theme} onToggle={onToggleTheme} inline />
-      </div>
       <div className={styles.header}>
-        <h1 className={styles.title}>Resultados</h1>
+        <h1 className={styles.title}>{t.results}</h1>
         <div className={styles.scoreBlock}>
           <span className={styles.totalScore}>{totalScore}</span>
-          <span className={styles.scoreLabel}>puntos</span>
+          <span className={styles.scoreLabel}>{t.points}</span>
         </div>
         <div className={styles.stats}>
           <span className={styles.correctCount}>
-            {correctAnswers} / 7 correctas
+            {correctAnswers} / 7 {t.correct}
           </span>
           <span className={styles.timeTotal}>{formatTime(totalTimeMs)}</span>
         </div>
@@ -102,7 +102,7 @@ export function ResultsScreen({
           if (!result.isCorrect) {
             if (isTimeout) {
               detailContent = (
-                <span className={styles.timeout}>⏱ Tiempo agotado</span>
+                <span className={styles.timeout}>{t.timeout}</span>
               );
             } else {
               detailContent = (
@@ -136,10 +136,10 @@ export function ResultsScreen({
 
       <div className={styles.actions}>
         <button className={styles.btnPrimary} onClick={onPlayAgain}>
-          Jugar de nuevo
+          {t.playAgain}
         </button>
         <button className={styles.btnSecondary} onClick={onChangeSource}>
-          Cambiar fuente
+          {t.backToHome}
         </button>
       </div>
     </div>

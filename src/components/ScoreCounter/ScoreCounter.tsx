@@ -4,9 +4,10 @@ import styles from './ScoreCounter.module.css';
 interface ScoreCounterProps {
   score: number;
   streak?: number;
+  streakLabel?: string;
 }
 
-export function ScoreCounter({ score, streak = 0 }: ScoreCounterProps) {
+export function ScoreCounter({ score, streak = 0, streakLabel = 'Racha' }: ScoreCounterProps) {
   const prevScoreRef = useRef(score);
   const [animating, setAnimating] = useState(false);
 
@@ -25,7 +26,7 @@ export function ScoreCounter({ score, streak = 0 }: ScoreCounterProps) {
         {score}
       </span>
       {streak >= 2 && (
-        <span className={styles.streak}>🔥 Racha x{streak}</span>
+        <span className={styles.streak}>🔥 {streakLabel} x{streak}</span>
       )}
     </div>
   );

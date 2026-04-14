@@ -115,31 +115,12 @@
   white-space: nowrap;
 }
 
-/* Actions: Borrar (small, left) + Cerrar (big, center/right) */
+/* Actions: only Close button now (Delete moved to Settings menu) */
 .actions {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
   margin-top: auto;
   padding-top: 1rem;
-}
-
-.btnClear {
-  padding: 0.6rem 1rem;
-  border: 1.5px solid var(--color-wrong, #f44336);
-  border-radius: var(--radius);
-  background: transparent;
-  color: var(--color-wrong, #f44336);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-  flex-shrink: 0;
-}
-
-.btnClear:hover {
-  background: var(--color-wrong, #f44336);
-  color: #fff;
 }
 
 .btnClose {
