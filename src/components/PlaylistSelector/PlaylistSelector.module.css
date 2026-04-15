@@ -25,13 +25,14 @@
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 1rem 0.75rem;
+  padding: 0.75rem 0.5rem;
   background: var(--color-surface, #fff);
   border: 1.5px solid var(--color-border, #ddd);
   border-radius: 0.75rem;
   cursor: pointer;
   transition: border-color 0.2s, transform 0.15s, box-shadow 0.15s;
   color: var(--color-text, #111);
+  overflow: hidden;
 }
 
 .card:hover {
@@ -44,9 +45,22 @@
   transform: translateY(0);
 }
 
+.image {
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
 .icon {
   font-size: 2rem;
   line-height: 1;
+  width: 4rem;
+  height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .name {

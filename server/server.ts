@@ -190,6 +190,27 @@ app.get('/api/artist-tracks', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/playlist-image?playlistId={id}
+ * Returns only the image URL for a playlist (lightweight metadata fetch).
+ */
+app.get('/api/playlist-image', async (req: Request, res: Response) => {
+  const playlistId = sanitizeString(req.query['playlistId']);
+
+  if (!playlistId) {
+    res.status(400).json({ error: 'Query parameter "playlistId" is required.' });
+    return;
+  }
+
+  try {
+    const meta = (await deezerGet(`/playlist/${encodeURIComponent(playlistId)}`)) as Record<string, unknown>;
+    const imageUrl = sanitizeString(meta['picture_medium'] ?? meta['picture']);
+    res.json({ imageUrl });
+  } catch (err) {
+    handleError(err, res);
+  }
+});
+
+/**
  * GET /api/playlist-tracks?playlistId={id}
  * Returns tracks from a Deezer playlist (only those with a valid preview).
  */

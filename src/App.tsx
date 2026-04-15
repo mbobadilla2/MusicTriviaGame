@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useGameSession } from './hooks/useGameSession';
 import { useTheme } from './hooks/useTheme';
 import { useLanguage } from './hooks/useLanguage';
@@ -11,6 +11,13 @@ import { LeaderboardView } from './components/LeaderboardView/LeaderboardView';
 import { SettingsMenu } from './components/SettingsMenu/SettingsMenu';
 import type { FeedbackState } from './components/QuestionCard/QuestionCard';
 import type { Question } from './types';
+
+const BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? 'http://localhost:3001';
+
+const PLAYLIST_IDS = [
+  '3155776842','1306931615','1677006641','1964085082','867825522',
+  '878989033','789123393','1615514485','1902101402','5104249748',
+];
 
 // Shared button style for top-bar icon buttons
 const topBtnStyle: React.CSSProperties = {
@@ -33,6 +40,32 @@ function App() {
   const { language, toggleLanguage, t } = useLanguage();
   const [showLeaderboard, setShowLeaderboard] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
+  const [playlistImages, setPlaylistImages] = useState<Record<string, string>>({});
+  const [appReady, setAppReady] = useState(false);
+
+  // Load all playlist images on startup before showing the main screen
+  useEffect(() => {
+    let cancelled = false;
+    async function loadImages() {
+      const results = await Promise.allSettled(
+        PLAYLIST_IDS.map(async (id) => {
+          const res = await fetch(`${BASE_URL}/api/playlist-image?playlistId=${id}`);
+          if (!res.ok) return { id, imageUrl: '' };
+          const data = await res.json() as { imageUrl?: string };
+          return { id, imageUrl: data.imageUrl ?? '' };
+        })
+      );
+      if (cancelled) return;
+      const images: Record<string, string> = {};
+      for (const r of results) {
+        if (r.status === 'fulfilled') images[r.value.id] = r.value.imageUrl;
+      }
+      setPlaylistImages(images);
+      setAppReady(true);
+    }
+    void loadImages();
+    return () => { cancelled = true; };
+  }, []);
 
   const {
     phase,
@@ -66,6 +99,25 @@ function App() {
   }
 
   const isSourceSelection = phase === 'source-selection';
+
+  // Splash screen while loading playlist images
+  if (!appReady) {
+    return (
+      <div style={{
+        position: 'fixed', inset: 0, display: 'flex', flexDirection: 'column',
+        alignItems: 'center', justifyContent: 'center', gap: '1rem',
+        background: 'var(--color-bg)', color: 'var(--color-text)',
+      }}>
+        <span style={{ fontSize: '3rem' }}>🎵</span>
+        <span style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--color-primary)' }}>
+          Music Trivia
+        </span>
+        <span style={{ fontSize: '0.9rem', color: 'var(--color-text-secondary)' }}>
+          Loading...
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -111,7 +163,7 @@ function App() {
 
       {/* Source selection */}
       {isSourceSelection && (
-        <SourceSelection onSourceSelected={selectSource} t={t} />
+        <SourceSelection onSourceSelected={selectSource} t={t} playlistImages={playlistImages} />
       )}
 
       {/* Preload */}

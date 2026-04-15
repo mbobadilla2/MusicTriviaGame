@@ -10,9 +10,10 @@ interface SourceSelectionProps {
   onSourceSelected: (source: TriviaSource) => void;
   insufficientTracks?: boolean;
   t: Translations;
+  playlistImages: Record<string, string>;
 }
 
-export function SourceSelection({ onSourceSelected, insufficientTracks = false, t }: SourceSelectionProps) {
+export function SourceSelection({ onSourceSelected, insufficientTracks = false, t, playlistImages }: SourceSelectionProps) {
   const [pendingSource, setPendingSource] = useState<TriviaSource | null>(null);
 
   function handleSourcePicked(source: TriviaSource) {
@@ -49,7 +50,7 @@ export function SourceSelection({ onSourceSelected, insufficientTracks = false, 
       </div>
 
       <section className={styles.section}>
-        <PlaylistSelector onSelectPlaylist={handleSourcePicked} t={t} />
+        <PlaylistSelector onSelectPlaylist={handleSourcePicked} t={t} playlistImages={playlistImages} />
       </section>
 
       <ConfirmDialog
