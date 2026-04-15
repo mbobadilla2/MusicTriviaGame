@@ -16,6 +16,7 @@ export interface TriviaSource {
 export interface Question {
   track: Track;
   options: string[];
+  optionTracks: Track[];   // parallel array to options, with full track info
   correctIndex: number;
   audioBlob: Blob;
 }
@@ -42,6 +43,7 @@ export interface LeaderboardEntry {
   id: string;
   sourceName: string;
   sourceType: 'artist' | 'playlist';
+  sourceImageUrl: string;
   totalScore: number;
   correctAnswers: number;
   totalTimeMs: number;

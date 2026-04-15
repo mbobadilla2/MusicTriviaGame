@@ -15,11 +15,14 @@
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
+  /* Fixed height so layout doesn't shift when the artist image loads */
+  min-height: 12rem;
+  justify-content: center;
 }
 
 .sourceImage {
-  width: 7rem;
-  height: 7rem;
+  width: 10rem;
+  height: 10rem;
   border-radius: 0.75rem;
   object-fit: cover;
 }
@@ -28,12 +31,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 7rem;
-  height: 7rem;
+  width: 10rem;
+  height: 10rem;
   border-radius: 0.75rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  font-size: 3.5rem;
+  font-size: 5rem;
   line-height: 1;
 }
 

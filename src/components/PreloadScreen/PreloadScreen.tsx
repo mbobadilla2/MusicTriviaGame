@@ -6,7 +6,7 @@
 import { useEffect, useState } from 'react';
 import type { TriviaSource, Question } from '../../types';
 import { getArtistTracks, getPlaylistTracks } from '../../api/apiClient';
-import { preloadAudio } from '../../audio/audioPlayer';
+import { preloadAudio, unlockAudio } from '../../audio/audioPlayer';
 import { selectTracks } from '../../engine/randomizer';
 import { buildQuestions } from '../../engine/gameEngine';
 import { hasEnoughTracks, filterTracksWithPreview } from '../../utils/validators';
@@ -34,7 +34,7 @@ type LoadState = 'loading' | 'ready' | 'error';
 function SourceImage({ imageUrl, name }: { imageUrl: string; name: string }) {
   const isUrl = imageUrl.startsWith('http');
   if (isUrl) {
-    return <img src={imageUrl} alt={name} className={styles.sourceImage} />;
+    return <img src={imageUrl} alt={name} className={styles.sourceImage} width={160} height={160} />;
   }
   if (imageUrl) {
     return <span className={styles.sourceEmoji}>{imageUrl}</span>;
@@ -78,11 +78,11 @@ export function PreloadScreen({ source, onReady, onError, t }: PreloadScreenProp
         // 3. Seleccionar aleatoriamente 7 tracks
         const selectedTracks = selectTracks(tracksWithPreview, MIN_TRACKS);
 
-        // 4. Obtener todos los nombres para opciones incorrectas
-        const allTrackNames = allTracks.map((t) => t.name);
+        // 4. Obtener todos los tracks para opciones incorrectas (se pasan completos para incluir imágenes)
+        // allTracks ya está disponible arriba
 
         // 5. Construir preguntas
-        const builtQuestions = buildQuestions(selectedTracks, allTrackNames);
+        const builtQuestions = buildQuestions(selectedTracks, allTracks);
 
         if (cancelled) return;
 
@@ -117,6 +117,8 @@ export function PreloadScreen({ source, onReady, onError, t }: PreloadScreenProp
   }, [source]);
 
   function handlePlay() {
+    // Unlock AudioContext on iOS — must be called synchronously from a user tap
+    unlockAudio();
     onReady(questions);
   }
 

@@ -46,6 +46,7 @@ export function ResultsScreen({
         id,
         sourceName: source.name,
         sourceType: source.type,
+        sourceImageUrl: source.imageUrl,
         totalScore,
         correctAnswers,
         totalTimeMs,
@@ -76,6 +77,7 @@ export function ResultsScreen({
     <div className={styles.screen}>
       <div className={styles.header}>
         <h1 className={styles.title}>{t.results}</h1>
+        <p className={styles.sourceName}>{source.name}</p>
         <div className={styles.scoreBlock}>
           <span className={styles.totalScore}>{totalScore}</span>
           <span className={styles.scoreLabel}>{t.points}</span>
@@ -106,11 +108,7 @@ export function ResultsScreen({
               );
             } else {
               detailContent = (
-                <>
-                  <span className={styles.chosen}>{chosenName}</span>
-                  {' → '}
-                  <span className={styles.correctAnswer}>{correctName}</span>
-                </>
+                <span className={styles.chosen}>{chosenName}</span>
               );
             }
           }
@@ -120,15 +118,29 @@ export function ResultsScreen({
               key={index}
               className={`${styles.songItem} ${result.isCorrect ? styles.correct : styles.incorrect}`}
             >
-              <span className={styles.indicator}>
-                {result.isCorrect ? '✅' : '❌'}
-              </span>
+              {result.question.track.albumImageUrl ? (
+                <img
+                  src={result.question.track.albumImageUrl}
+                  alt=""
+                  className={styles.albumThumb}
+                  draggable={false}
+                />
+              ) : (
+                <span className={styles.indicator}>
+                  {result.isCorrect ? '✅' : '❌'}
+                </span>
+              )}
               <div className={styles.songInfo}>
                 <span className={styles.songName}>{correctName}</span>
                 {detailContent && (
                   <span className={styles.songDetail}>{detailContent}</span>
                 )}
               </div>
+              {result.question.track.albumImageUrl && (
+                <span className={styles.indicatorRight}>
+                  {result.isCorrect ? '✅' : '❌'}
+                </span>
+              )}
             </li>
           );
         })}

@@ -175,7 +175,7 @@ app.get('/api/artist-tracks', async (req: Request, res: Response) => {
 
   try {
     const data = (await deezerGet(
-      `/artist/${encodeURIComponent(artistId)}/top?limit=50`
+      `/artist/${encodeURIComponent(artistId)}/top?limit=100`
     )) as Record<string, unknown>;
 
     const items = Array.isArray(data['data']) ? data['data'] as Record<string, unknown>[] : [];

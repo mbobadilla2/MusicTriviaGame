@@ -39,21 +39,36 @@ export function LeaderboardView({ onClose, t }: LeaderboardViewProps) {
         {entries.length === 0 ? (
           <p className={styles.empty}>{t.noScores}</p>
         ) : (
-          <ol className={styles.list}>
-            {entries.map((entry, index) => (
-              <li key={entry.id} className={styles.entry}>
-                <span className={styles.position}>#{index + 1}</span>
-                <div className={styles.entryMain}>
-                  <span className={styles.source}>{entry.sourceName}</span>
-                  <span className={styles.date}>{formatDate(entry.playedAt)}</span>
-                </div>
-                <div className={styles.entryStats}>
-                  <span className={styles.score}>{entry.totalScore} pts</span>
-                  <span className={styles.correct}>{entry.correctAnswers}/7</span>
-                  <span className={styles.time}>{formatTime(entry.totalTimeMs)}</span>
-                </div>
-              </li>
-            ))}
+        <ol className={styles.list}>
+            {entries.map((entry, index) => {
+              const isUrl = entry.sourceImageUrl?.startsWith('http');
+              return (
+                <li key={entry.id} className={styles.entry}>
+                  <span className={styles.position}>#{index + 1}</span>
+                  {isUrl ? (
+                    <img
+                      src={entry.sourceImageUrl}
+                      alt=""
+                      className={styles.sourceThumb}
+                      draggable={false}
+                    />
+                  ) : (
+                    <span className={styles.sourceEmoji}>
+                      {entry.sourceImageUrl || '🎵'}
+                    </span>
+                  )}
+                  <div className={styles.entryMain}>
+                    <span className={styles.source}>{entry.sourceName}</span>
+                    <span className={styles.date}>{formatDate(entry.playedAt)}</span>
+                  </div>
+                  <div className={styles.entryStats}>
+                    <span className={styles.score}>{entry.totalScore} pts</span>
+                    <span className={styles.correct}>{entry.correctAnswers}/7</span>
+                    <span className={styles.time}>{formatTime(entry.totalTimeMs)}</span>
+                  </div>
+                </li>
+              );
+            })}
           </ol>
         )}
 

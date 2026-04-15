@@ -16,6 +16,7 @@ import type { Question } from './types';
 const topBtnStyle: React.CSSProperties = {
   position: 'fixed',
   top: '1rem',
+  right: '1rem',
   zIndex: 100,
   background: 'var(--color-surface)',
   border: '1px solid var(--color-border)',
@@ -71,22 +72,22 @@ function App() {
       {/* Top-bar buttons — only on source selection screen */}
       {isSourceSelection && (
         <>
-          {/* Leaderboard button */}
-          <button
-            onClick={() => setShowLeaderboard(true)}
-            aria-label={t.leaderboardTitle}
-            style={{ ...topBtnStyle, right: '4.5rem' }}
-          >
-            🏆
-          </button>
-
           {/* Settings button */}
           <button
             onClick={() => setShowSettings((v) => !v)}
             aria-label={t.settings}
-            style={{ ...topBtnStyle, right: '1rem' }}
+            style={{ ...topBtnStyle}}
           >
             ⚙️
+          </button>
+
+          {/* Leaderboard button */}
+          <button
+            onClick={() => setShowLeaderboard(true)}
+            aria-label={t.leaderboardTitle}
+            style={{ ...topBtnStyle, top: '4rem' }}
+            >
+            🏆
           </button>
         </>
       )}

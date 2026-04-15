@@ -61,9 +61,27 @@
 .position {
   font-weight: 700;
   color: var(--color-primary);
-  font-size: 0.9rem;
+  font-size: 1.1rem;
   flex-shrink: 0;
   width: 2rem;
+}
+
+.sourceThumb {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.sourceEmoji {
+  font-size: 3rem;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .entryMain {
@@ -80,7 +98,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  font-size: 0.9rem;
+  font-size: 1.1rem;
 }
 
 .date {
@@ -99,7 +117,7 @@
 .score {
   font-weight: 700;
   color: var(--color-primary);
-  font-size: 0.9rem;
+  font-size: 1.1em;
   white-space: nowrap;
 }
 

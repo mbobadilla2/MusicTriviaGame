@@ -49,7 +49,8 @@ export const translations = {
     // Streak
     streak: 'Racha',
     // Footer
-    madeBy: 'Made by Miguel Fernando w/ Kiro 🤖',
+    madeBy: 'Made by Miguel Fernando w/ Kiro 👻',
+    poweredBy: 'Powered by Deezer',
   },
   en: {
     // Source selection
@@ -100,6 +101,7 @@ export const translations = {
     streak: 'Streak',
     // Footer
     madeBy: 'Made by Miguel Fernando w/ Kiro 🤖',
+    poweredBy: 'Powered by Deezer',
   },
 } as const;
 

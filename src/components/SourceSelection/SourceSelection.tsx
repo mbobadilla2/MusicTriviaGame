@@ -61,7 +61,8 @@ export function SourceSelection({ onSourceSelected, insufficientTracks = false, 
       />
 
       <footer className={styles.footer}>
-        {t.madeBy}
+        <span>{t.madeBy}</span>
+        <span className={styles.poweredBy}>{t.poweredBy}</span>
       </footer>
     </div>
   );

@@ -20,7 +20,7 @@ interface GameScreenProps {
   selectedIndex: number | null;
   onAnswer: (selectedIndex: number | null, timeMs: number) => void;
   onNext: () => void;
-  t: { question: string; of: string; next: string; streak: string; };
+  t: { question: string; of: string; next: string; streak: string; timeout: string; };
 }
 
 export function GameScreen({
@@ -42,6 +42,7 @@ export function GameScreen({
 
   const autoAdvanceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const answeredRef = useRef(false);
+  const focusTrapRef = useRef<HTMLDivElement>(null);
 
   const handleExpire = useCallback(() => {
     if (answeredRef.current) return;
@@ -52,22 +53,22 @@ export function GameScreen({
 
   const { timeMs, stop, resetAndStart } = useTimer(QUESTION_DURATION_MS, handleExpire);
 
-  // When a new question-active phase starts, reset+start timer and play audio
+  // When a new question-active phase starts, reset+start timer and play audio.
+  // We depend only on currentIndex so this fires exactly once per new question,
+  // regardless of how many times React re-runs effects (StrictMode / iOS Safari).
   useEffect(() => {
-    if (phase !== 'question-active') return;
-
     answeredRef.current = false;
-
+    // Move focus to the invisible trap element so no option button retains focus
+    focusTrapRef.current?.focus();
+    resetAndStart();
     if (question.audioBlob && question.audioBlob.size > 0) {
       AudioPlayer.play(question.audioBlob);
     }
-    resetAndStart();
-
     return () => {
       stop();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, phase]);
+  }, [currentIndex]);
 
   // Handle feedback phase: play sound effect and auto-advance
   useEffect(() => {
@@ -139,12 +140,21 @@ export function GameScreen({
       </div>
 
       <div className={styles.cardWrapper}>
+        {/* Invisible focus trap — receives focus on each new question so no
+            option button retains focus from the previous answer on mobile */}
+        <div
+          ref={focusTrapRef}
+          tabIndex={-1}
+          aria-hidden="true"
+          style={{ position: 'absolute', opacity: 0, pointerEvents: 'none', width: 0, height: 0, overflow: 'hidden' }}
+        />
         <QuestionCard
           question={question}
           onAnswer={handleAnswer}
           feedbackState={feedbackState}
           selectedIndex={selectedIndex}
           disabled={isDisabled}
+          timeoutLabel={t.timeout}
         />
       </div>
 

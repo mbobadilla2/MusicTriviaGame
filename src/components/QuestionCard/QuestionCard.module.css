@@ -1,6 +1,39 @@
 .card {
   width: 100%;
+  max-width: 50rem;
+  margin: 0 auto;
   padding: 0 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.timeoutBanner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: var(--radius);
+  animation: fadeIn 0.2s ease-out;
+}
+
+.timeoutEmoji {
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.timeoutText {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #ef4444;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .options {
@@ -26,14 +59,27 @@
   transition: border-color 0.15s ease, background 0.15s ease, transform 0.1s ease;
 }
 
-.option:not(:disabled):hover {
-  border-color: var(--color-primary);
-  background: var(--color-surface-hover, var(--color-surface));
-  transform: translateY(-1px);
+/* Hover only on devices with a real pointer (mouse), not touchscreens */
+@media (hover: hover) and (pointer: fine) {
+  .option:not(:disabled):hover {
+    border-color: var(--color-primary);
+    background: var(--color-surface-hover, var(--color-surface));
+    transform: translateY(-1px);
+  }
 }
 
 .option:disabled {
   cursor: default;
+}
+
+.option:focus,
+.option:focus-visible {
+  outline: none;
+}
+
+/* Prevent tap highlight on mobile */
+.option {
+  -webkit-tap-highlight-color: transparent;
 }
 
 .optionLabel {
@@ -47,6 +93,15 @@
   font-size: 0.8rem;
   font-weight: 700;
   flex-shrink: 0;
+}
+
+.albumThumb {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 4px;
+  object-fit: cover;
+  flex-shrink: 0;
+  display: block;
 }
 
 .optionText {

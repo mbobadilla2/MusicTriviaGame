@@ -4,7 +4,7 @@
  */
 
 import type { Track, TriviaSource, Question, QuestionResult, TriviaSession } from '../types';
-import { generateWrongOptions, shuffleOptions } from './randomizer';
+import { shuffleOptions } from './randomizer';
 import { calculateTotalPoints } from './scoreCalculator';
 
 /** Duración de cada pregunta en milisegundos (Requisito 6.3) */
@@ -12,27 +12,32 @@ export const QUESTION_DURATION_MS = 10000;
 
 /**
  * Construye el array de preguntas a partir de los tracks seleccionados.
- * Para cada track genera 3 opciones incorrectas de allTrackNames,
+ * Para cada track genera 3 opciones incorrectas del pool completo,
  * baraja las 4 opciones y usa new Blob() como placeholder para audioBlob.
  */
-export function buildQuestions(tracks: Track[], allTrackNames: string[]): Question[] {
+export function buildQuestions(tracks: Track[], allTracks: Track[]): Question[] {
   return tracks.map((track) => {
-    // Construir pool de tracks ficticios a partir de allTrackNames para reutilizar generateWrongOptions
-    // Usamos generateWrongOptions con el pool real de tracks cuando sea posible,
-    // pero aquí trabajamos con nombres, así que filtramos directamente.
-    const wrongNames = allTrackNames
-      .filter((name) => name !== track.name)
+    // Pick 3 wrong tracks from the pool (different from the correct one)
+    const wrongTracks = allTracks
+      .filter((t) => t.id !== track.id)
       .sort(() => Math.random() - 0.5)
       .slice(0, 3);
 
-    // Aseguramos exactamente 3 opciones incorrectas (puede haber menos si el pool es pequeño)
-    const allOptions = [track.name, ...wrongNames];
+    // Build parallel arrays: names for display, tracks for images
+    const allOptionTracks = [track, ...wrongTracks];
+    const allOptionNames = allOptionTracks.map((t) => t.name);
 
-    const { shuffled, correctIndex } = shuffleOptions(allOptions);
+    const { shuffled: shuffledNames, correctIndex } = shuffleOptions(allOptionNames);
+
+    // Reorder optionTracks to match the shuffled name order
+    const shuffledTracks = shuffledNames.map(
+      (name) => allOptionTracks.find((t) => t.name === name) ?? track
+    );
 
     return {
       track,
-      options: shuffled,
+      options: shuffledNames,
+      optionTracks: shuffledTracks,
       correctIndex,
       audioBlob: new Blob(),
     };
