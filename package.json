@@ -11,7 +11,9 @@
     "test": "vitest --run",
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "server": "cd server && node_modules/.bin/ts-node server.ts"
+    "server": "cd server && node_modules/.bin/ts-node server.ts",
+    "docs": "typedoc",
+    "docs:local": "typedoc --out docs"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -30,6 +32,7 @@
     "gh-pages": "^6.3.0",
     "jsdom": "^25.0.1",
     "msw": "^2.6.4",
+    "typedoc": "^0.28.19",
     "typescript": "^5.6.3",
     "vite": "^5.4.10",
     "vitest": "^2.1.5"

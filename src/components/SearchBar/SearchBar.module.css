@@ -67,7 +67,7 @@
 }
 
 .itemButton:hover {
-  background: var(--color-hover, #f5f5f5);
+  background: var(--color-surface-hover, rgba(128, 128, 128, 0.4));
 }
 
 .avatar {

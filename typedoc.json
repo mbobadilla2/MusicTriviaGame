@@ -1,0 +1,30 @@
+{
+  "entryPointStrategy": "expand",
+  "entryPoints": [
+    "src/types/index.ts",
+    "src/i18n/translations.ts",
+    "src/engine",
+    "src/hooks",
+    "src/audio/audioPlayer.ts",
+    "src/api/apiClient.ts",
+    "src/utils/validators.ts"
+  ],
+  "exclude": [
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
+  "tsconfig": "./tsconfig.docs.json",
+  "out": "dist/docs",
+  "name": "Music Trivia Game — API Docs",
+  "readme": "ARCHITECTURE.md",
+  "includeVersion": true,
+  "navigationLinks": {
+    "App": "../index.html",
+    "GitHub": "https://github.com/mbobadilla2/MusicTriviaGame"
+  },
+  "excludePrivate": true,
+  "excludeInternal": false,
+  "searchInComments": true
+}

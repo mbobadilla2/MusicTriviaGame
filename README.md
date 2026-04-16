@@ -81,6 +81,19 @@ Then update `VITE_API_BASE_URL` in `.env` to your local IP (e.g. `http://192.168
 npm test
 ```
 
+### Documentation
+
+Generate the API docs locally:
+
+```bash
+npm run docs:local
+open docs/index.html
+```
+
+The published docs are available at:
+- **API Reference** (TypeDoc): `https://mbobadilla2.github.io/MusicTriviaGame/docs/`
+- **Architecture Guide**: [`ARCHITECTURE.md`](ARCHITECTURE.md)
+
 ## Deployment
 
 ### Backend → Render
