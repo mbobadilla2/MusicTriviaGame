@@ -119,6 +119,82 @@
   border-radius: 4px;
   object-fit: cover;
   flex-shrink: 0;
+  display: block;
+}
+
+.albumBtn {
+  position: relative;
+  width: 4rem;
+  height: 4rem;
+  flex-shrink: 0;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.albumBtn:focus { outline: none; }
+
+.albumOverlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+
+.albumBtn:hover .albumOverlay,
+.albumBtn:active .albumOverlay {
+  opacity: 1;
+}
+
+.progressRing {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  transform: rotate(-90deg);
+  pointer-events: none;
+}
+
+/* Circumference of r=28: 2π×28 ≈ 175.9 */
+.progressTrack {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 3;
+}
+
+.progressArc {
+  fill: none;
+  stroke: var(--color-primary, #1db954);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 175.9;
+  stroke-dashoffset: 175.9;
+  transition: stroke-dashoffset 0.3s;
+}
+
+@keyframes progressFill {
+  from { stroke-dashoffset: 175.9; }
+  to   { stroke-dashoffset: 0; }
+}
+
+.progressArcActive {
+  animation: progressFill 30s linear forwards;
+}
+
+.playIcon {
+  position: relative;
+  font-size: 1.25rem;
+  color: #fff;
+  line-height: 1;
+  z-index: 1;
 }
 
 .indicatorRight {

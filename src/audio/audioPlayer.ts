@@ -2,6 +2,9 @@ import type { Question } from '../types';
 
 let currentAudio: HTMLAudioElement | null = null;
 let currentObjectUrl: string | null = null;
+let onEndedCallback: (() => void) | null = null;
+// Incremented on every stop/pause so async play callbacks can detect cancellation
+let playToken = 0;
 
 // iOS Safari requires AudioContext to be resumed from a user gesture.
 // We create it once and resume it on the first user interaction.
@@ -93,12 +96,13 @@ export async function preloadAudio(
   );
 }
 
-export function play(audioBlob: Blob): void {
+export function play(audioBlob: Blob, onEnded?: () => void): void {
   stop();
+  onEndedCallback = onEnded ?? null;
+  const token = ++playToken; // capture current token for this play call
 
   const ctx = getAudioContext();
 
-  // Try AudioContext path first (works reliably on iOS after unlock)
   if (ctx) {
     if (ctx.state === 'suspended') {
       ctx.resume().catch(() => {});
@@ -106,44 +110,62 @@ export function play(audioBlob: Blob): void {
 
     const reader = new FileReader();
     reader.onload = (e) => {
+      // If stop/pause was called after this play(), abort
+      if (token !== playToken) return;
+
       const arrayBuffer = e.target?.result as ArrayBuffer;
       if (!arrayBuffer || !audioCtx) return;
       audioCtx.decodeAudioData(arrayBuffer, (buffer) => {
-        if (!audioCtx) return;
-        // Stop any previous source
+        // Check again after async decode
+        if (token !== playToken || !audioCtx) return;
+
         try { audioCtxSource?.stop(); } catch { /* already stopped */ }
         audioCtxSource = audioCtx.createBufferSource();
         audioCtxSource.buffer = buffer;
         audioCtxSource.connect(audioCtx.destination);
+        audioCtxSource.onended = () => {
+          if (token !== playToken) return; // was stopped manually
+          audioCtxSource = null;
+          const cb = onEndedCallback;
+          onEndedCallback = null;
+          cb?.();
+        };
         audioCtxSource.start(0);
       }, () => {
-        // Fallback to HTMLAudioElement if decoding fails
-        playWithElement(audioBlob);
+        if (token !== playToken) return;
+        playWithElement(audioBlob, onEnded);
       });
     };
     reader.readAsArrayBuffer(audioBlob);
     return;
   }
 
-  // Fallback: HTMLAudioElement
-  playWithElement(audioBlob);
+  playWithElement(audioBlob, onEnded);
 }
 
-function playWithElement(audioBlob: Blob): void {
+function playWithElement(audioBlob: Blob, onEnded?: () => void): void {
   currentObjectUrl = URL.createObjectURL(audioBlob);
   currentAudio = new Audio(currentObjectUrl);
+  if (onEnded) {
+    currentAudio.addEventListener('ended', () => {
+      const cb = onEndedCallback;
+      onEndedCallback = null;
+      cb?.();
+    }, { once: true });
+  }
   currentAudio.play().catch(() => {});
 }
 
 export function pause(): void {
-  // Pause AudioContext source
+  playToken++; // cancel any in-flight play
   try { audioCtxSource?.stop(); } catch { /* already stopped */ }
   audioCtxSource = null;
-  // Pause HTMLAudioElement fallback
   currentAudio?.pause();
 }
 
 export function stop(): void {
+  playToken++; // cancel any in-flight play
+  onEndedCallback = null;
   // Stop AudioContext source
   try { audioCtxSource?.stop(); } catch { /* already stopped */ }
   audioCtxSource = null;

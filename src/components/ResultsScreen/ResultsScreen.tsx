@@ -1,8 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { QuestionResult, TriviaSource } from '../../types';
 import { addEntry, getEntries, saveEntries, isHighScore } from '../../engine/leaderboard';
 import { playHighScore, playGameEnd } from '../../audio/soundFX';
+import { AudioPlayer } from '../../audio/audioPlayer';
 import styles from './ResultsScreen.module.css';
 
 interface ResultsScreenProps {
@@ -32,6 +33,22 @@ export function ResultsScreen({
   const correctAnswers = results.filter((r) => r.isCorrect).length;
   const totalTimeMs = results.reduce((sum, r) => sum + r.timeMs, 0);
   const savedRef = useRef(false);
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+
+  // Stop audio when leaving results screen
+  useEffect(() => {
+    return () => { AudioPlayer.stop(); };
+  }, []);
+
+  const handleAlbumClick = useCallback((index: number, audioBlob: Blob) => {
+    if (playingIndex === index) {
+      AudioPlayer.pause();
+      setPlayingIndex(null);
+    } else {
+      AudioPlayer.play(audioBlob, () => setPlayingIndex(null));
+      setPlayingIndex(index);
+    }
+  }, [playingIndex]);
 
   useEffect(() => {
     if (savedRef.current) return;
@@ -119,12 +136,32 @@ export function ResultsScreen({
               className={`${styles.songItem} ${result.isCorrect ? styles.correct : styles.incorrect}`}
             >
               {result.question.track.albumImageUrl ? (
-                <img
-                  src={result.question.track.albumImageUrl}
-                  alt=""
-                  className={styles.albumThumb}
-                  draggable={false}
-                />
+                <button
+                  className={styles.albumBtn}
+                  onClick={() => handleAlbumClick(index, result.question.audioBlob)}
+                  aria-label={playingIndex === index ? 'Pausar' : 'Reproducir'}
+                >
+                  <img
+                    src={result.question.track.albumImageUrl}
+                    alt=""
+                    className={styles.albumThumb}
+                    draggable={false}
+                  />
+                  <span className={`${styles.albumOverlay} ${playingIndex === index ? styles.playing : ''}`}>
+                    {/* Circular progress ring — CSS animation runs for 30s (Deezer preview length) */}
+                    <svg className={styles.progressRing} viewBox="0 0 64 64" aria-hidden="true">
+                      <circle className={styles.progressTrack} cx="32" cy="32" r="28" />
+                      <circle
+                        className={`${styles.progressArc} ${playingIndex === index ? styles.progressArcActive : ''}`}
+                        cx="32" cy="32" r="28"
+                      />
+                    </svg>
+                    <span className={styles.playIcon}>
+                      {playingIndex === index ? '𑫨' : '▶'}
+                      {/* {playingIndex === index ? '⏸' : '▶'} */}
+                    </span>
+                  </span>
+                </button>
               ) : (
                 <span className={styles.indicator}>
                   {result.isCorrect ? '✅' : '❌'}
