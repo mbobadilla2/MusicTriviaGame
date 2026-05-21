@@ -1,5 +1,7 @@
 # Architecture — Music Trivia Game
 
+> 🇪🇸 [Versión en español](ARCHITECTURE.es.md)
+
 A mobile-first music trivia web app where players identify songs by their 30-second previews. Built with React + TypeScript + Vite on the frontend and a Node.js/Express proxy on the backend.
 
 ---
@@ -92,6 +94,7 @@ A mobile-first music trivia web app where players identify songs by their 30-sec
 |---|---|
 | Frontend framework | React 18 + TypeScript |
 | Build tool | Vite |
+| Package manager | pnpm |
 | Styling | CSS Modules + CSS custom properties |
 | Audio | Web Audio API (`AudioContext`) + `HTMLAudioElement` fallback |
 | Backend proxy | Node.js + Express + TypeScript |
@@ -404,16 +407,23 @@ All leaderboard functions fail silently if localStorage is unavailable (e.g. pri
 ### Prerequisites
 
 - Node.js 18+
-- npm
+- pnpm (`npm install -g pnpm`)
 
 ### Setup
 
 ```bash
 # 1. Install frontend dependencies
-npm install
+pnpm install
+
+# On first install, pnpm blocks build scripts for security.
+# Approve the two required packages when prompted:
+pnpm approve-builds
+# → approve: esbuild, msw
+# Then re-run:
+pnpm install
 
 # 2. Install backend dependencies
-cd server && npm install && cd ..
+cd server && pnpm install && cd ..
 
 # 3. Create environment file
 cp .env.example .env
@@ -424,21 +434,21 @@ cp .env.example .env
 
 ```bash
 # Terminal 1 — backend proxy
-npm run server
+pnpm run server
 
 # Terminal 2 — frontend dev server
-npm run dev
+pnpm run dev
 
 # To expose on local network (for mobile testing):
-npm run dev -- --host
+pnpm run dev -- --host
 # Then set VITE_API_BASE_URL=http://<your-local-ip>:3001 in .env
 ```
 
 ### Testing
 
 ```bash
-npm test          # run all tests (watch mode)
-npm run test:run  # single run (CI)
+pnpm test          # single run
+pnpm run test:watch  # watch mode
 ```
 
 ---

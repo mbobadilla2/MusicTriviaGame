@@ -3,6 +3,8 @@ import * as fc from 'fast-check';
 import { render, screen, cleanup } from '@testing-library/react';
 import { ResultsScreen } from './ResultsScreen';
 import type { Question, QuestionResult, TriviaSource } from '../../types';
+import { translations } from '../../i18n/translations';
+import { expect, vi } from 'vitest';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
@@ -45,6 +47,13 @@ const questionArb = fc
         albumImageUrl: '',
       },
       options,
+      optionTracks: options.map(() => ({
+        id: 'track-id',
+        name: correctName,
+        previewUrl: null,
+        artistName: 'Artist',
+        albumImageUrl: '',
+      })),
       correctIndex,
       audioBlob: new Blob(),
     };
@@ -122,6 +131,7 @@ function renderResults(results: QuestionResult[], totalScore = 0, source?: Trivi
       source={source ?? defaultSource}
       onPlayAgain={() => {}}
       onChangeSource={() => {}}
+      t={translations.es}
     />,
   );
 }

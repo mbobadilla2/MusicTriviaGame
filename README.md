@@ -1,5 +1,7 @@
 # 🎵 Music Trivia Game
 
+> 🇪🇸 [Versión en español](README.es.md)
+
 A mobile-first music trivia web app. Listen to song previews and guess the title before the timer runs out. Built with React + TypeScript and powered by the Deezer API.
 
 ## Features
@@ -19,6 +21,7 @@ A mobile-first music trivia web app. Listen to song previews and guess the title
 | Frontend | React 18 + TypeScript + Vite |
 | Backend proxy | Node.js + Express |
 | Music data | Deezer Public API |
+| Package manager | pnpm |
 | Testing | Vitest + fast-check (property-based) |
 | Deploy | GitHub Pages (frontend) + Render (backend) |
 
@@ -27,24 +30,30 @@ A mobile-first music trivia web app. Listen to song previews and guess the title
 ### Prerequisites
 
 - Node.js 18+
-- npm
+- pnpm (`npm install -g pnpm`)
 
 ### Setup
 
 1. Clone the repo:
    ```bash
-   git clone https://github.com/your-username/music-trivia-game.git
-   cd music-trivia-game
+   git clone https://github.com/mbobadilla2/MusicTriviaGame.git
+   cd MusicTriviaGame
    ```
 
 2. Install frontend dependencies:
    ```bash
-   npm install
+   pnpm install
    ```
+
+   > **Note:** On first install, pnpm will ask you to approve build scripts for two dependencies that compile native binaries. Run the following command and approve both `esbuild` and `msw` when prompted:
+   > ```bash
+   > pnpm approve-builds
+   > ```
+   > Then run `pnpm install` again.
 
 3. Install backend dependencies:
    ```bash
-   cd server && npm install && cd ..
+   cd server && pnpm install && cd ..
    ```
 
 4. Create your `.env` file:
@@ -59,10 +68,10 @@ Open two terminals:
 
 ```bash
 # Terminal 1 — backend proxy
-npm run server
+pnpm run server
 
 # Terminal 2 — frontend
-npm run dev
+pnpm run dev
 ```
 
 Open `http://localhost:5173` in your browser.
@@ -70,7 +79,7 @@ Open `http://localhost:5173` in your browser.
 To test on mobile devices on the same network:
 
 ```bash
-npm run dev -- --host
+pnpm run dev -- --host
 ```
 
 Then update `VITE_API_BASE_URL` in `.env` to your local IP (e.g. `http://192.168.x.x:3001`).
@@ -78,7 +87,7 @@ Then update `VITE_API_BASE_URL` in `.env` to your local IP (e.g. `http://192.168
 ### Tests
 
 ```bash
-npm test
+pnpm test
 ```
 
 ### Documentation
@@ -86,7 +95,7 @@ npm test
 Generate the API docs locally:
 
 ```bash
-npm run docs:local
+pnpm run docs:local
 open docs/index.html
 ```
 
