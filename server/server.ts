@@ -25,8 +25,8 @@ app.use(cors({
     if (allowed && origin === allowed) return callback(null, true);
     // Allow any *.github.io origin
     if (/^https:\/\/[^.]+\.github\.io$/.test(origin)) return callback(null, true);
-    // Allow any *.amplifyapp.com origin
-    if (/^https:\/\/[^.]+\.amplifyapp\.com$/.test(origin)) return callback(null, true);
+    // Allow any *.amplifyapp.com origin (including subdomains like main.xxxxx.amplifyapp.com)
+    if (/^https:\/\/[^/]+\.amplifyapp\.com$/.test(origin)) return callback(null, true);
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
 }));
